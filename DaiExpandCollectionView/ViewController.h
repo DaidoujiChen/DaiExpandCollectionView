@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DaiExpandCollectionView.h"
 
-@interface ViewController : UIViewController
-
+@interface ViewController : UIViewController <DaiExpandCollectionViewDelegate>
 
 @end
-

@@ -7,21 +7,39 @@
 //
 
 #import "ViewController.h"
-
-@interface ViewController ()
-
-@end
+#import "ImageCollectionViewCell.h"
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+#pragma mark - DaiExpandCollectionViewDelegate
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *identifier = @"ImageCollectionViewCell";
+    ImageCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+    cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%d.jpg", indexPath.row + 1]];
+    return cell;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (NSInteger)numberOfItemsInCollectionView:(UICollectionView *)collectionView {
+    return 20;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndex:(NSInteger)index {
+    NSLog(@"selected : %d", index);
+}
+
+#pragma mark - life cycle
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    DaiExpandCollectionView *daiExpandCollectionView = [DaiExpandCollectionView initWithFrame:self.view.bounds];
+    [daiExpandCollectionView registerClass:[ImageCollectionViewCell class] forCellWithReuseIdentifier:@"ImageCollectionViewCell"];
+    daiExpandCollectionView.backgroundColor = [UIColor whiteColor];
+    daiExpandCollectionView.expandDelegate = self;
+    [self.view addSubview:daiExpandCollectionView];
+    
+    [daiExpandCollectionView expandAtIndex:0 animated:NO];
 }
 
 @end
