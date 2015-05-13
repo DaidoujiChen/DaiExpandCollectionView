@@ -16,6 +16,31 @@ Overview
 ======
 最傳統的 `UICollectionView` 只可以單一的顯示某些固定大小, `DaiExpandCollectionView` 可以同時顯示兩種不同大小 size 的 item, 並且以動畫的效果呈現. 
 
+Install
+======
+
+###Cocoapods
+
+	pod 'DaiExpandCollectionView', '~> 0.0.3'
+
+然後在要使用 `DaiExpandCollectionView` 的地方
+
+	#import <DaiExpandCollectionView/DaiExpandCollectionView.h>
+
+###Manual
+
+複製 `DaiExpandCollectionView\DaiExpandCollectionView\` 的四個檔案
+
+	DaiExpandCollectionView.h
+	DaiExpandCollectionView.m
+	DaiExpandCollectionViewFlowLayout.h
+	DaiExpandCollectionViewFlowLayout.m
+	
+到你的專案中, 然後在要使用 `DaiExpandCollectionView` 的地方
+
+	#import "DaiExpandCollectionView.h"
+
+
 How to use
 ======
 
@@ -70,7 +95,8 @@ How to use
 
 Support
 ======
-- iOS 8.0+ tested
+- iOS 7.0+
+- iOS 8.0+ Tested
 - iPhone / iPad
 - Vertical only
   
