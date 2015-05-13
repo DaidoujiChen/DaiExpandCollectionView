@@ -16,7 +16,8 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier = @"ImageCollectionViewCell";
     ImageCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-    cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%d.jpg", indexPath.row + 1]];
+    NSInteger imageIndex = (indexPath.row + 1);
+    cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%td.jpg", imageIndex]];
     return cell;
 }
 
@@ -25,7 +26,7 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndex:(NSInteger)index {
-    NSLog(@"selected : %d", index);
+    NSLog(@"selected : %td", index);
 }
 
 #pragma mark - life cycle

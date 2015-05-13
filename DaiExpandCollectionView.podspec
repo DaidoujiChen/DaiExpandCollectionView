@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "DaiExpandCollectionView"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "Expand the current selected item. Focus the user's eyes."
   s.homepage     = "https://github.com/DaidoujiChen/DaiExpandCollectionView"
   s.license      = "MIT"
