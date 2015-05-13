@@ -1,74 +1,76 @@
 DaiExpandCollectionView
 ======
 
-Expand the current selected item. Focus the user's eyes.
+Expand current selected item and catch users' eyes.
 
-DaidoujiChen
-
-daidoujichen@gmail.com
-
-Preview
+Demo
 ======
 
 ![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiExpandCollectionView2.gif)
 
+Installation
+======
+
+###CocoaPods
+DaiExpandCollectionView is available through [CocoaPods](http://cocoapods.org).
+
+* Add ```pod 'DaiExpandCollectionView'``` to your Podfile
+* Run ```pod install```
+* Run ```open App.xcworkspace```
+
+###Manually
+Drap 4 source files under floder `DaiExpandCollectionView\DaiExpandCollectionView\` to your project.
+
+```
+DaiExpandCollectionView.h
+DaiExpandCollectionView.m
+DaiExpandCollectionViewFlowLayout.h
+DaiExpandCollectionViewFlowLayout.m
+```	
+and then import the main header file：`#import "DaiExpandCollectionView.h"`
+
 Overview
 ======
-最傳統的 `UICollectionView` 只可以單一的顯示某些固定大小, `DaiExpandCollectionView` 可以同時顯示兩種不同大小 size 的 item, 並且以動畫的效果呈現. 
-
-Install
-======
-
-###Cocoapods
-
-	pod 'DaiExpandCollectionView', '~> 0.0.3'
-
-然後在要使用 `DaiExpandCollectionView` 的地方
-
-	#import <DaiExpandCollectionView/DaiExpandCollectionView.h>
-
-###Manual
-
-複製 `DaiExpandCollectionView\DaiExpandCollectionView\` 的四個檔案
-
-	DaiExpandCollectionView.h
-	DaiExpandCollectionView.m
-	DaiExpandCollectionViewFlowLayout.h
-	DaiExpandCollectionViewFlowLayout.m
-	
-到你的專案中, 然後在要使用 `DaiExpandCollectionView` 的地方
-
-	#import "DaiExpandCollectionView.h"
-
+Unlike default `UICollectionView` can only display items with same fixed size,
+`DaiExpandCollectionView` can not only display items in two sizes simultaneously but also change selected items with smooth animation.
 
 How to use
 ======
 
-###Step 1 : init
+###Step 1 : Init
 
 	DaiExpandCollectionView *daiExpandCollectionView = [DaiExpandCollectionView initWithFrame:self.view.bounds];
     [daiExpandCollectionView registerClass:[ImageCollectionViewCell class] forCellWithReuseIdentifier:@"ImageCollectionViewCell"];
     daiExpandCollectionView.expandDelegate = self;
     [self.view addSubview:daiExpandCollectionView];
 
-比較不一樣的地方是, 初始化 `DaiExpandCollectionView` 的方法是調用 `[DaiExpandCollectionView initWithFrame:]` 而不是一般的 `UICollectionView` 的 `[[UICollectionView alloc] initWithFrame:collectionViewLayout:]`, 之後, 如同一般的 `UICollectionView`, 我們需要先幫他註冊一個要用的 `UICollectionViewCell`, 並且把 `expandDelegate` 設定完成即可.
+**Note:** Init `DaiExpandCollectionView` using `[DaiExpandCollectionView initWithFrame:]` instead of `[[UICollectionView alloc] initWithFrame:collectionViewLayout:]` which used by default `UICollectionView`.
 
-###Step 2 : implement required delegate
+Next, register `UICollectionViewCell` and then set up `expandDelegate`.
 
-`DaiExpandCollectionViewDelegate` 中, 有兩個必要實現的 method
+###Step 2 : Required delegate methods
 
-	- (NSInteger)numberOfItemsInCollectionView:(UICollectionView *)collectionView;
-	- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+There are two required methods in `DaiExpandCollectionViewDelegate`:
 
-`numberOfItemsInCollectionView:` 回傳 data 的總數, 像是
+`- (NSInteger)numberOfItemsInCollectionView:(UICollectionView *)collectionView;`
+
+Return the number of items (views) in the collection view.
+
+For example:
+
 
 	- (NSInteger)numberOfItemsInCollectionView:(UICollectionView *)collectionView {
 	     return 20;
 	}
 	
-代表有 20 筆的資料.
+means there are 20 items (views) in the collection view.
 
-`collectionView:cellForItemAtIndexPath:` 回傳當前 `indexPath` 需要顯示的 `UICollectionViewCell`, 像是
+
+`- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;`
+
+Return a `UICollectionViewCell` to be displayed at the specified index in the collection view.
+
+For example:
 
 	- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     	static NSString *identifier = @"ImageCollectionViewCell";
@@ -76,22 +78,18 @@ How to use
     	cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%d.jpg", indexPath.row + 1]];
     	return cell;
 	}
-	
-就如同一般的 `UICollectionView` 的方式.
 
-###Step 3 : implement optional delegate
 
-`DaiExpandCollectionViewDelegate` 的最後一個 method, 可以選擇要不要實現
+###Step 3 : Optional delegate methods
 
 	- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndex:(NSInteger)index;
 
-會在這個 method 回傳使用者點擊了哪一個 index 的物件, 像是
+Return the index of current selected item.
+For example:
 
 	- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndex:(NSInteger)index {
     	NSLog(@"selected : %d", index);
 	}
-	
-如果頁面需要跳轉, 或是顯示其他資訊, 可以從這邊完成.
 
 Support
 ======
