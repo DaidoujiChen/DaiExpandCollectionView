@@ -32,7 +32,7 @@ and then import the main header file：`#import "DaiExpandCollectionView.h"`
 Overview
 ======
 Unlike default `UICollectionView` can only display items with same fixed size,
-`DaiExpandCollectionView` can not only display items in two sizes simultaneously but also change selected items with smooth animation.
+`DaiExpandCollectionView` can not only display items in two different sizes simultaneously but also change selected items with smooth animation.
 
 How to use
 ======
