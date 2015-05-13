@@ -52,7 +52,7 @@ Next, register `UICollectionViewCell` and then set up `expandDelegate`.
 
 There are two required methods in `DaiExpandCollectionViewDelegate`:
 
-`- (NSInteger)numberOfItemsInCollectionView:(UICollectionView *)collectionView;`
+**`- (NSInteger)numberOfItemsInCollectionView:(UICollectionView *)collectionView;`**
 Return the number of items (views) in the collection view.
 For example:
 
@@ -63,7 +63,7 @@ For example:
 means there are 20 items (views) in the collection view.
 
 
-`- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;`
+**`- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;`**
 Return a `UICollectionViewCell` to be displayed at the specified index in the collection view.
 For example:
 
