@@ -8,6 +8,11 @@ Demo
 
 ![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiExpandCollectionView2.gif)
 
+Overview
+======
+Unlike default `UICollectionView` can only display items with same fixed size,
+`DaiExpandCollectionView` can not only display items in two different sizes simultaneously but also change selected items with smooth animation.
+
 Installation
 ======
 
@@ -19,7 +24,7 @@ DaiExpandCollectionView is available through [CocoaPods](http://cocoapods.org).
 * Run ```open App.xcworkspace```
 
 ###Manually
-Drap 4 source files under floder `DaiExpandCollectionView\DaiExpandCollectionView\` to your project.
+Drap 4 source files under folder `DaiExpandCollectionView\DaiExpandCollectionView\` to your project.
 
 ```
 DaiExpandCollectionView.h
@@ -28,11 +33,6 @@ DaiExpandCollectionViewFlowLayout.h
 DaiExpandCollectionViewFlowLayout.m
 ```	
 and then import the main header file：`#import "DaiExpandCollectionView.h"`
-
-Overview
-======
-Unlike default `UICollectionView` can only display items with same fixed size,
-`DaiExpandCollectionView` can not only display items in two different sizes simultaneously but also change selected items with smooth animation.
 
 How to use
 ======
