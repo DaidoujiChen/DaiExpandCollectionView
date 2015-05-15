@@ -19,6 +19,29 @@
 
 @implementation DaiExpandCollectionView
 
+@synthesize itemsInRow = _itemsInRow;
+
+#pragma mark - custom getter / setter
+
+- (void)setItemsInRow:(NSInteger)itemsInRow {
+    if (_itemsInRow != itemsInRow) {
+        if ([self.animationLock tryLock]) {
+            _itemsInRow = itemsInRow;
+            __weak DaiExpandCollectionView *weakSelf = self;
+            [self performBatchUpdates:^{
+                weakSelf.daiExpandCollectionViewFlowLayout.itemsInRow = itemsInRow;
+                [weakSelf.daiExpandCollectionViewFlowLayout reloadGrid];
+            } completion:^(BOOL finished) {
+                [weakSelf.animationLock unlock];
+            }];
+        }
+    }
+}
+
+- (NSInteger)itemsInRow {
+    return _itemsInRow;
+}
+
 #pragma mark - DaiExpandCollectionViewFlowLayoutDelegate
 
 - (NSIndexPath *)selectedIndexPath {
@@ -78,8 +101,12 @@
 #pragma mark - class method
 
 + (instancetype)initWithFrame:(CGRect)frame {
+    return [self initWithFrame:frame itemsInRow:3];
+}
+
++ (instancetype)initWithFrame:(CGRect)frame itemsInRow:(NSInteger)itemsInRow {
     // init flowlayout
-    DaiExpandCollectionViewFlowLayout *newDaiExpandCollectionViewFlowLayout = [[DaiExpandCollectionViewFlowLayout alloc] initWithFrame:frame];
+    DaiExpandCollectionViewFlowLayout *newDaiExpandCollectionViewFlowLayout = [[DaiExpandCollectionViewFlowLayout alloc] initWithFrame:frame itemsInRow:itemsInRow];
     
     // init collectionview
     DaiExpandCollectionView *newDaiExpandCollectionView = [[DaiExpandCollectionView alloc] initWithFrame:frame collectionViewLayout:newDaiExpandCollectionViewFlowLayout];

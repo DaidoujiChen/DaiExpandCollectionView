@@ -9,6 +9,12 @@
 #import "ViewController.h"
 #import "ImageCollectionViewCell.h"
 
+@interface ViewController ()
+
+@property (nonatomic, strong) DaiExpandCollectionView *daiExpandCollectionView;
+
+@end
+
 @implementation ViewController
 
 #pragma mark - DaiExpandCollectionViewDelegate
@@ -34,13 +40,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    DaiExpandCollectionView *daiExpandCollectionView = [DaiExpandCollectionView initWithFrame:self.view.bounds];
-    [daiExpandCollectionView registerClass:[ImageCollectionViewCell class] forCellWithReuseIdentifier:@"ImageCollectionViewCell"];
-    daiExpandCollectionView.backgroundColor = [UIColor whiteColor];
-    daiExpandCollectionView.expandDelegate = self;
-    [self.view addSubview:daiExpandCollectionView];
+    CGRect frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - 40);
+    self.daiExpandCollectionView = [DaiExpandCollectionView initWithFrame:frame itemsInRow:3];
+    [self.daiExpandCollectionView registerClass:[ImageCollectionViewCell class] forCellWithReuseIdentifier:@"ImageCollectionViewCell"];
+    self.daiExpandCollectionView.backgroundColor = [UIColor whiteColor];
+    self.daiExpandCollectionView.expandDelegate = self;
+    [self.view addSubview:self.daiExpandCollectionView];
+    [self.daiExpandCollectionView expandAtIndex:0 animated:NO];
     
-    [daiExpandCollectionView expandAtIndex:0 animated:NO];
+    frame = CGRectMake(0, CGRectGetHeight(self.view.bounds) - 40, CGRectGetWidth(self.view.bounds), 40);
+    UISlider *slider = [[UISlider alloc] initWithFrame:frame];
+    slider.maximumValue = 7;
+    slider.minimumValue = 3;
+    slider.value = 3;
+    [slider addTarget:self action:@selector(onSliderValueChange:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:slider];
+}
+
+- (void)onSliderValueChange:(UISlider *)slider {
+    self.daiExpandCollectionView.itemsInRow = slider.value;
 }
 
 @end

@@ -15,8 +15,10 @@
 @property (nonatomic, weak) id <DaiExpandCollectionViewFlowLayoutDelegate> delegate;
 @property (nonatomic, readonly) CGSize originalSize;
 @property (nonatomic, readonly) CGSize expandSize;
+@property (nonatomic, assign) NSInteger itemsInRow;
 
-- (instancetype)initWithFrame:(CGRect)frame;
+- (instancetype)initWithFrame:(CGRect)frame itemsInRow:(NSInteger)items;
+- (void)reloadGrid;
 
 @end
 

@@ -15,7 +15,11 @@
 
 @property (nonatomic, weak) id <DaiExpandCollectionViewDelegate> expandDelegate;
 
+@property (nonatomic, assign) NSInteger itemsInRow;
+
+// the default itemsInRow is 3
 + (instancetype)initWithFrame:(CGRect)frame;
++ (instancetype)initWithFrame:(CGRect)frame itemsInRow:(NSInteger)itemsInRow;
 
 - (void)expandAtIndex:(NSInteger)index animated:(BOOL)animated;
 
