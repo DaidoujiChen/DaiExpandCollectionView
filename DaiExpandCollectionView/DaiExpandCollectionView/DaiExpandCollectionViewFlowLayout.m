@@ -11,15 +11,6 @@
 #define defaultGap 5.0f
 #define numbersInRow 3
 
-#define GridForX(arg) \
-(arg % numbersInRow)
-
-#define GridForY(arg) \
-(arg / numbersInRow)
-
-#define GridPosition(arg) \
-(defaultGap + ((arg) * self.squareWithGap))
-
 typedef enum {
     DaiExpandCollectionViewFlowLayoutTypeLeft,
     DaiExpandCollectionViewFlowLayoutTypeCenter,
@@ -54,8 +45,8 @@ typedef enum {
         self.minimumInteritemSpacing = 0;
         self.sectionInset = UIEdgeInsetsMake(defaultGap, defaultGap, 0, 0);
         
-        // gap - square - gap - square - gap - square - gap => 4 gaps
-        CGFloat square = (CGRectGetWidth(frame) - (4 * defaultGap)) / numbersInRow;
+        // gap - square - gap - square - gap - square - gap => (numbersInRow + 1) gaps
+        CGFloat square = (CGRectGetWidth(frame) - ((numbersInRow + 1) * defaultGap)) / numbersInRow;
         self.squareWithGap = square + defaultGap;
         
         //一般大小
@@ -72,10 +63,12 @@ typedef enum {
 - (void)prepareLayout {
     [super prepareLayout];
     
+    NSInteger previousSelectedIndex = [self.delegate previousSelectedIndexPath].row;
+    NSInteger selectedIndex = [self.delegate selectedIndexPath].row;
     //如果在同一列上
-    if (GridForY([self.delegate previousSelectedIndexPath].row) == GridForY([self.delegate selectedIndexPath].row)) {
-        DaiExpandCollectionViewFlowLayoutType previousSelectedType = [self.delegate previousSelectedIndexPath].row % numbersInRow;
-        DaiExpandCollectionViewFlowLayoutType selectedType = [self.delegate selectedIndexPath].row % numbersInRow;
+    if ([self gridYFromIndex:previousSelectedIndex] == [self gridYFromIndex:selectedIndex]) {
+        DaiExpandCollectionViewFlowLayoutType previousSelectedType = previousSelectedIndex % numbersInRow;
+        DaiExpandCollectionViewFlowLayoutType selectedType = selectedIndex % numbersInRow;
         
         if (previousSelectedType == DaiExpandCollectionViewFlowLayoutTypeLeft && selectedType == DaiExpandCollectionViewFlowLayoutTypeCenter) {
             self.centerExpandType = DaiExpandCollectionViewFlowLayoutCenterExpandTypeRight;
@@ -145,8 +138,7 @@ typedef enum {
                 if (row > selectedIndexPath.row) {
                     shiftIndex = row + numbersInRow;
                 }
-                frame.origin.x = GridPosition(GridForX(shiftIndex));
-                frame.origin.y = GridPosition(GridForY(shiftIndex));
+                frame.origin = [self gridPositionAtIndex:shiftIndex];
             }
             
             if ([self.delegate previousSelectedIndexPath] && row == [self.delegate previousSelectedIndexPath].row) {
@@ -158,8 +150,7 @@ typedef enum {
             }
         }
         else {
-            frame.origin.x = GridPosition(GridForX(row));
-            frame.origin.y = GridPosition(GridForY(row));
+            frame.origin = [self gridPositionAtIndex:row];
         }
         layoutAttributes.frame = frame;
     }
@@ -172,23 +163,42 @@ typedef enum {
 
 #pragma mark - private
 
+#pragma mark * grid position
+
+- (CGPoint)gridPositionAtIndex:(NSInteger)index offsetX:(NSInteger)offsetX offsetY:(NSInteger)offsetY {
+    NSInteger gridX = [self gridXFromIndex:index];
+    NSInteger gridY = [self gridYFromIndex:index];
+    CGFloat positionX = defaultGap + ((gridX + offsetX) * self.squareWithGap);
+    CGFloat positionY = defaultGap + ((gridY + offsetY) * self.squareWithGap);
+    return CGPointMake(positionX, positionY);
+}
+
+- (CGPoint)gridPositionAtIndex:(NSInteger)index {
+    return [self gridPositionAtIndex:index offsetX:0 offsetY:0];
+}
+
+- (NSInteger)gridXFromIndex:(NSInteger)index {
+    return index % numbersInRow;
+}
+
+- (NSInteger)gridYFromIndex:(NSInteger)index {
+    return index / numbersInRow;
+}
+
 #pragma mark * left expand method
 
 - (void)selectedLeftItemRuleAtRow:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
     switch (row - selectedIndex.row) {
         case 0:
-            frame->origin.x = GridPosition(GridForX(row));
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row];
             break;
             
         case 1:
-            frame->origin.x = GridPosition(GridForX(row) + 1);
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row offsetX:1 offsetY:0];
             break;
             
         case 2:
-            frame->origin.x = GridPosition(GridForX(row));
-            frame->origin.y = GridPosition(GridForY(row) + 1);
+            frame->origin = [self gridPositionAtIndex:row offsetX:0 offsetY:1];
             break;
             
         default:
@@ -202,18 +212,15 @@ typedef enum {
 - (void)selectedCenterItemRuleAtRow_rightDown:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
     switch (row - selectedIndex.row) {
         case -1:
-            frame->origin.x = GridPosition(GridForX(row));
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row];
             break;
             
         case 0:
-            frame->origin.x = GridPosition(GridForX(row));
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row];
             break;
             
         case 1:
-            frame->origin.x = GridPosition(GridForX(row) - 2);
-            frame->origin.y = GridPosition(GridForY(row) + 1);
+            frame->origin = [self gridPositionAtIndex:row offsetX:-2 offsetY:1];
             break;
             
         default:
@@ -225,18 +232,15 @@ typedef enum {
 - (void)selectedCenterItemRuleAtRow_leftDown:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
     switch (row - selectedIndex.row) {
         case -1:
-            frame->origin.x = GridPosition(GridForX(row) + 2);
-            frame->origin.y = GridPosition(GridForY(row) + 1);
+            frame->origin = [self gridPositionAtIndex:row offsetX:2 offsetY:1];
             break;
             
         case 0:
-            frame->origin.x = GridPosition(GridForX(row) - 1);
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row offsetX:-1 offsetY:0];
             break;
             
         case 1:
-            frame->origin.x = GridPosition(GridForX(row));
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row];
             break;
             
         default:
@@ -250,18 +254,15 @@ typedef enum {
 - (void)selectedRightItemRuleAtRow:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
     switch (row - selectedIndex.row) {
         case -2:
-            frame->origin.x = GridPosition(GridForX(row));
-            frame->origin.y = GridPosition(GridForY(row) + 1);
+            frame->origin = [self gridPositionAtIndex:row offsetX:0 offsetY:1];
             break;
             
         case -1:
-            frame->origin.x = GridPosition(GridForX(row) - 1);
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row offsetX:-1 offsetY:0];
             break;
             
         case 0:
-            frame->origin.x = GridPosition(GridForX(row) - 1);
-            frame->origin.y = GridPosition(GridForY(row));
+            frame->origin = [self gridPositionAtIndex:row offsetX:-1 offsetY:0];
             break;
             
         default:
