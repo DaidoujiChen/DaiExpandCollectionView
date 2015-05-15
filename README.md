@@ -8,6 +8,8 @@ Demo
 
 ![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiExpandCollectionView2.gif)
 
+![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiExpandCollectionViewPad2.gif)
+
 Overview
 ======
 Unlike default `UICollectionView` can only display items with same fixed size,
