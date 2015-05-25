@@ -11,15 +11,9 @@
 #define defaultGap 5.0f
 
 typedef enum {
-    DaiExpandCollectionViewFlowLayoutTypeLeft,
-    DaiExpandCollectionViewFlowLayoutTypeCenter,
-    DaiExpandCollectionViewFlowLayoutTypeRight
-} DaiExpandCollectionViewFlowLayoutType;
-
-typedef enum {
-    DaiExpandCollectionViewFlowLayoutCenterExpandTypeLeft,
-    DaiExpandCollectionViewFlowLayoutCenterExpandTypeRight
-} DaiExpandCollectionViewFlowLayoutCenterExpandType;
+    DaiExpandCollectionViewFlowLayoutExpandDirectionLeft,
+    DaiExpandCollectionViewFlowLayoutExpandDirectionRight
+} DaiExpandCollectionViewFlowLayoutExpandDirection;
 
 @interface DaiExpandCollectionViewFlowLayout ()
 
@@ -29,7 +23,7 @@ typedef enum {
 @property (nonatomic, assign) CGFloat maxWidth;
 @property (nonatomic, assign) CGFloat maxHeight;
 @property (nonatomic, assign) CGRect frame;
-@property (nonatomic, assign) DaiExpandCollectionViewFlowLayoutCenterExpandType centerExpandType;
+@property (nonatomic, assign) DaiExpandCollectionViewFlowLayoutExpandDirection expandDirection;
 
 @end
 
@@ -46,6 +40,7 @@ typedef enum {
         self.minimumLineSpacing = defaultGap;
         self.minimumInteritemSpacing = 0;
         self.sectionInset = UIEdgeInsetsMake(defaultGap, defaultGap, 0, 0);
+        self.expandDirection = DaiExpandCollectionViewFlowLayoutExpandDirectionRight;
         
         [self reloadGrid];
     }
@@ -57,26 +52,7 @@ typedef enum {
 - (void)prepareLayout {
     [super prepareLayout];
     
-    NSInteger previousSelectedIndex = [self.delegate previousSelectedIndexPath].row;
-    NSInteger selectedIndex = [self.delegate selectedIndexPath].row;
-    //如果在同一列上
-    if ([self gridYFromIndex:previousSelectedIndex] == [self gridYFromIndex:selectedIndex]) {
-        DaiExpandCollectionViewFlowLayoutType previousSelectedType = [self typeAtIndex:previousSelectedIndex];
-        DaiExpandCollectionViewFlowLayoutType selectedType = [self typeAtIndex:selectedIndex];
-        
-        if (previousSelectedType == DaiExpandCollectionViewFlowLayoutTypeLeft && selectedType == DaiExpandCollectionViewFlowLayoutTypeCenter) {
-            self.centerExpandType = DaiExpandCollectionViewFlowLayoutCenterExpandTypeRight;
-        }
-        else if (previousSelectedType == DaiExpandCollectionViewFlowLayoutTypeRight && selectedType == DaiExpandCollectionViewFlowLayoutTypeCenter) {
-            self.centerExpandType = DaiExpandCollectionViewFlowLayoutCenterExpandTypeLeft;
-        }
-        else {
-            self.centerExpandType = arc4random() % 2;
-        }
-    }
-    else {
-        self.centerExpandType = arc4random() % 2;
-    }
+    self.expandDirection = !self.expandDirection;
     
     //計算 data 長度
     NSIndexPath *selectedIndexPath = [self.delegate selectedIndexPath];
@@ -105,26 +81,13 @@ typedef enum {
         NSInteger row = layoutAttributes.indexPath.row;
         BOOL isDefaultItem = NO;
         if (selectedIndexPath) {
-            DaiExpandCollectionViewFlowLayoutType selectedType = [self typeAtIndex:selectedIndexPath.row];
-            switch (selectedType) {
-                case DaiExpandCollectionViewFlowLayoutTypeLeft:
-                    [self selectedLeftItemRuleAtRow:row andSelectedIndex:selectedIndexPath isDefaultItem:&isDefaultItem frame:&frame];
+            switch (self.expandDirection) {
+                case DaiExpandCollectionViewFlowLayoutExpandDirectionLeft:
+                    [self expandToLeftAtRow:row selectIndexPath:selectedIndexPath isDefaultItem:&isDefaultItem frame:&frame];
                     break;
                     
-                case DaiExpandCollectionViewFlowLayoutTypeCenter:
-                    switch (self.centerExpandType) {
-                        case DaiExpandCollectionViewFlowLayoutCenterExpandTypeLeft:
-                            [self selectedCenterItemRuleAtRow_leftDown:row andSelectedIndex:selectedIndexPath isDefaultItem:&isDefaultItem frame:&frame];
-                            break;
-                            
-                        case DaiExpandCollectionViewFlowLayoutCenterExpandTypeRight:
-                            [self selectedCenterItemRuleAtRow_rightDown:row andSelectedIndex:selectedIndexPath isDefaultItem:&isDefaultItem frame:&frame];
-                            break;
-                    }
-                    break;
-                    
-                case DaiExpandCollectionViewFlowLayoutTypeRight:
-                    [self selectedRightItemRuleAtRow:row andSelectedIndex:selectedIndexPath isDefaultItem:&isDefaultItem frame:&frame];
+                case DaiExpandCollectionViewFlowLayoutExpandDirectionRight:
+                    [self expandToRightAtRow:row selectIndexPath:selectedIndexPath isDefaultItem:&isDefaultItem frame:&frame];
                     break;
             }
             
@@ -172,22 +135,6 @@ typedef enum {
 
 #pragma mark - private
 
-#pragma mark * DaiExpandCollectionViewFlowLayoutType
-
-- (DaiExpandCollectionViewFlowLayoutType)typeAtIndex:(NSInteger)index {
-    DaiExpandCollectionViewFlowLayoutType returnType = index % self.itemsInRow;
-    if (returnType == 0) {
-        returnType = DaiExpandCollectionViewFlowLayoutTypeLeft;
-    }
-    else if (returnType == self.itemsInRow - 1) {
-        returnType = DaiExpandCollectionViewFlowLayoutTypeRight;
-    }
-    else {
-        returnType = DaiExpandCollectionViewFlowLayoutTypeCenter;
-    }
-    return returnType;
-}
-
 #pragma mark * grid position
 
 - (CGPoint)gridPositionAtIndex:(NSInteger)index offsetX:(NSInteger)offsetX offsetY:(NSInteger)offsetY {
@@ -210,68 +157,56 @@ typedef enum {
     return index / self.itemsInRow;
 }
 
-#pragma mark * left expand method
+#pragma mark * expand method
 
-- (void)selectedLeftItemRuleAtRow:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
-    NSInteger delta = row - selectedIndex.row;
-    if (delta == 0) {
-        frame->origin = [self gridPositionAtIndex:row];
-    }
-    else if (delta < self.itemsInRow && delta > 0) {
-        frame->origin = [self gridPositionAtIndex:row offsetX:(self.itemsInRow - delta - 1) offsetY:(delta - 1)];
-    }
-    else {
-        *isDefaultItem = YES;
-    }
-}
-
-#pragma mark * center expand method
-
-- (void)selectedCenterItemRuleAtRow_rightDown:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
-    if ([self gridYFromIndex:row] == [self gridYFromIndex:selectedIndex.row]) {
-        NSInteger delta = row - selectedIndex.row;
-        if (delta >= -1 * self.itemsInRow && delta < 0) {
-            frame->origin = [self gridPositionAtIndex:row offsetX:(-1 * (row % self.itemsInRow)) offsetY:(row % self.itemsInRow)];
+- (void)expandToRightAtRow:(NSInteger)row selectIndexPath:(NSIndexPath *)selectedIndexPath isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
+    //需要位移的只有在同一個 row 上的項目
+    if ([self gridYFromIndex:row] == [self gridYFromIndex:selectedIndexPath.row]) {
+        NSInteger delta = row - selectedIndexPath.row;
+        NSInteger indexInRow = row % self.itemsInRow;
+        NSInteger offsetX = 0;
+        NSInteger offsetY = 0;
+        if (delta < 0) {
+            NSInteger balance = 0;
+            offsetX = -1 * indexInRow;
+            offsetY = balance - offsetX;
         }
         else if (delta == 0) {
-            frame->origin = [self gridPositionAtIndex:row offsetX:(1 - (row % self.itemsInRow)) offsetY:0];
+            offsetX = 1 - indexInRow;
         }
-        else if (delta <= self.itemsInRow && delta > 0) {
-            frame->origin = [self gridPositionAtIndex:row offsetX:(-1 * (row % self.itemsInRow)) offsetY:abs((-1 * (row % self.itemsInRow))) - 1];
+        else if (delta > 0) {
+            NSInteger balance = -1;
+            offsetX = -1 * indexInRow;
+            offsetY = balance - offsetX;
         }
+        frame->origin = [self gridPositionAtIndex:row offsetX:offsetX offsetY:offsetY];
     }
     else {
         *isDefaultItem = YES;
     }
 }
 
-- (void)selectedCenterItemRuleAtRow_leftDown:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
-    if ([self gridYFromIndex:row] == [self gridYFromIndex:selectedIndex.row]) {
-        NSInteger delta = row - selectedIndex.row;
-        if (delta >= -1 * self.itemsInRow && delta < 0) {
-            frame->origin = [self gridPositionAtIndex:row offsetX:((self.itemsInRow - 1) - (row % self.itemsInRow)) offsetY:(row % self.itemsInRow)];
+- (void)expandToLeftAtRow:(NSInteger)row selectIndexPath:(NSIndexPath *)selectedIndexPath isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
+    //需要位移的只有在同一個 row 上的項目
+    if ([self gridYFromIndex:row] == [self gridYFromIndex:selectedIndexPath.row]) {
+        NSInteger delta = row - selectedIndexPath.row;
+        NSInteger indexInRow = row % self.itemsInRow;
+        NSInteger offsetX = 0;
+        NSInteger offsetY = 0;
+        if (delta < 0) {
+            NSInteger balance = self.itemsInRow - 1;
+            offsetX = balance - indexInRow;
+            offsetY = balance - offsetX;
         }
         else if (delta == 0) {
-            frame->origin = [self gridPositionAtIndex:row offsetX:(-1 * (row % self.itemsInRow)) offsetY:0];
+            offsetX = -1 * indexInRow;
         }
-        else if (delta <= self.itemsInRow && delta > 0) {
-            frame->origin = [self gridPositionAtIndex:row offsetX:((self.itemsInRow - 1) - (row % self.itemsInRow)) offsetY:(row % self.itemsInRow) - 1];
+        else if (delta > 0) {
+            NSInteger balance = self.itemsInRow - 2;
+            offsetX = balance - indexInRow + 1;
+            offsetY = balance - offsetX;
         }
-    }
-    else {
-        *isDefaultItem = YES;
-    }
-}
-
-#pragma mark * right expand method
-
-- (void)selectedRightItemRuleAtRow:(NSInteger)row andSelectedIndex:(NSIndexPath *)selectedIndex isDefaultItem:(BOOL *)isDefaultItem frame:(CGRect *)frame {
-    NSInteger delta = row - selectedIndex.row;
-    if (delta == 0) {
-        frame->origin = [self gridPositionAtIndex:row offsetX:(2 - self.itemsInRow) offsetY:0];
-    }
-    else if (delta >= -(self.itemsInRow - 1) && delta < 0) {
-        frame->origin = [self gridPositionAtIndex:row offsetX:-(self.itemsInRow + delta - 1) offsetY:(labs(delta) - 1)];
+        frame->origin = [self gridPositionAtIndex:row offsetX:offsetX offsetY:offsetY];
     }
     else {
         *isDefaultItem = YES;

@@ -32,6 +32,9 @@
                 weakSelf.daiExpandCollectionViewFlowLayout.itemsInRow = itemsInRow;
                 [weakSelf.daiExpandCollectionViewFlowLayout reloadGrid];
             } completion:^(BOOL finished) {
+                if (weakSelf.previousSelectedIndex != -1) {
+                    [weakSelf restoreItemInCollectionView:weakSelf atIndexPath:[NSIndexPath indexPathForRow:weakSelf.previousSelectedIndex inSection:0]];
+                }
                 [weakSelf.animationLock unlock];
             }];
         }
