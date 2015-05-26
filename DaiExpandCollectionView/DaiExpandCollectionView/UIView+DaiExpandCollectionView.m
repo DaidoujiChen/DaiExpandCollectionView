@@ -6,24 +6,24 @@
 //  Copyright (c) 2015年 DaidoujiChen. All rights reserved.
 //
 
-#import "UIView+Swizzling.h"
+#import "UIView+DaiExpandCollectionView.h"
 #import <objc/runtime.h>
 #import "DaiExpandCollectionView.h"
 
-@implementation UIView (Swizzling)
+@implementation UIView (DaiExpandCollectionView)
 
 #pragma mark - life cycle
 
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self swizzling:@selector(snapshotViewAfterScreenUpdates:) to:@selector(swizzling_snapshotViewAfterScreenUpdates:)];
+        [self swizzling:@selector(snapshotViewAfterScreenUpdates:) to:@selector(daiExpandCollectionView_snapshotViewAfterScreenUpdates:)];
     });
 }
 
 #pragma mark - swizzling method
 
-- (UIView *)swizzling_snapshotViewAfterScreenUpdates:(BOOL)afterUpdates {
+- (UIView *)daiExpandCollectionView_snapshotViewAfterScreenUpdates:(BOOL)afterUpdates {
     if ([self.superview isKindOfClass:[DaiExpandCollectionView class]]) {
         DaiExpandCollectionView *collectionView = (DaiExpandCollectionView *)self.superview;
         CGRect visibleFrame = CGRectMake(collectionView.contentOffset.x, collectionView.contentOffset.y, collectionView.contentOffset.x + collectionView.bounds.size.width, collectionView.contentOffset.y + collectionView.bounds.size.height);
@@ -31,7 +31,7 @@
             return nil;
         }
     }
-    return [self swizzling_snapshotViewAfterScreenUpdates:afterUpdates];
+    return [self daiExpandCollectionView_snapshotViewAfterScreenUpdates:afterUpdates];
 }
 
 #pragma mark - private instance method

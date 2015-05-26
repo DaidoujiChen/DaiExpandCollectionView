@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIView (Swizzling)
+@interface UIView (DaiExpandCollectionView)
 
 @end
