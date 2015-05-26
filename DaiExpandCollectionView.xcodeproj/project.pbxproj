@@ -38,6 +38,7 @@
 		1C7CB3211B0197A700FDF5F8 /* 9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C7CB30D1B0197A700FDF5F8 /* 9.jpg */; };
 		1C7CB3231B0197F200FDF5F8 /* 16.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C7CB3221B0197F200FDF5F8 /* 16.jpg */; };
 		1C7CB3251B019A2F00FDF5F8 /* 10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1C7CB3241B019A2F00FDF5F8 /* 10.jpg */; };
+		1CBD4B561B141126004E3F67 /* UIView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CBD4B551B141126004E3F67 /* UIView+Swizzling.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,8 @@
 		1C7CB30D1B0197A700FDF5F8 /* 9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 9.jpg; sourceTree = "<group>"; };
 		1C7CB3221B0197F200FDF5F8 /* 16.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 16.jpg; sourceTree = "<group>"; };
 		1C7CB3241B019A2F00FDF5F8 /* 10.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 10.jpg; sourceTree = "<group>"; };
+		1CBD4B541B141126004E3F67 /* UIView+Swizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Swizzling.h"; sourceTree = "<group>"; };
+		1CBD4B551B141126004E3F67 /* UIView+Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Swizzling.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +185,8 @@
 				1C08BB751B005A8B00BF1010 /* DaiExpandCollectionView.m */,
 				1C08BB771B005AD300BF1010 /* DaiExpandCollectionViewFlowLayout.h */,
 				1C08BB781B005AD300BF1010 /* DaiExpandCollectionViewFlowLayout.m */,
+				1CBD4B541B141126004E3F67 /* UIView+Swizzling.h */,
+				1CBD4B551B141126004E3F67 /* UIView+Swizzling.m */,
 			);
 			path = DaiExpandCollectionView;
 			sourceTree = "<group>";
@@ -340,6 +345,7 @@
 				1C08BB791B005AD300BF1010 /* DaiExpandCollectionViewFlowLayout.m in Sources */,
 				1C7CB2F71B01949800FDF5F8 /* ImageCollectionViewCell.m in Sources */,
 				1C08BB501B00595D00BF1010 /* main.m in Sources */,
+				1CBD4B561B141126004E3F67 /* UIView+Swizzling.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
