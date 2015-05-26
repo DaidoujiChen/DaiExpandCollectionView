@@ -28,15 +28,17 @@
         if ([self.animationLock tryLock]) {
             _itemsInRow = itemsInRow;
             __weak DaiExpandCollectionView *weakSelf = self;
-            [self performBatchUpdates:^{
-                weakSelf.daiExpandCollectionViewFlowLayout.itemsInRow = itemsInRow;
-                [weakSelf.daiExpandCollectionViewFlowLayout reloadGrid];
-            } completion:^(BOOL finished) {
-                if (weakSelf.previousSelectedIndex != -1) {
-                    [weakSelf restoreItemInCollectionView:weakSelf atIndexPath:[NSIndexPath indexPathForRow:weakSelf.previousSelectedIndex inSection:0]];
-                }
-                [weakSelf.animationLock unlock];
-            }];
+            [UIView animateWithDuration:0.4f delay:0 usingSpringWithDamping:0.6f initialSpringVelocity:0.5f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                [weakSelf performBatchUpdates:^{
+                    weakSelf.daiExpandCollectionViewFlowLayout.itemsInRow = itemsInRow;
+                    [weakSelf.daiExpandCollectionViewFlowLayout reloadGrid];
+                } completion:^(BOOL finished) {
+                    if (weakSelf.previousSelectedIndex != -1) {
+                        [weakSelf restoreItemInCollectionView:weakSelf atIndexPath:[NSIndexPath indexPathForRow:weakSelf.previousSelectedIndex inSection:0]];
+                    }
+                    [weakSelf.animationLock unlock];
+                }];
+            } completion:nil];
         }
     }
 }
@@ -141,15 +143,17 @@
         [collectionView bringSubviewToFront:cell];
         if (animated) {
             __weak DaiExpandCollectionView *weakSelf = self;
-            [collectionView performBatchUpdates: ^{
-                weakSelf.previousSelectedIndex = weakSelf.selectedIndex;
-                weakSelf.selectedIndex = selectedIndexPath.row;
-            } completion: ^(BOOL finished) {
-                if (weakSelf.previousSelectedIndex != -1) {
-                    [weakSelf restoreItemInCollectionView:collectionView atIndexPath:[NSIndexPath indexPathForRow:weakSelf.previousSelectedIndex inSection:0]];
-                }
-                [weakSelf.animationLock unlock];
-            }];
+            [UIView animateWithDuration:0.4f delay:0 usingSpringWithDamping:0.6f initialSpringVelocity:0.5f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                [collectionView performBatchUpdates: ^{
+                    weakSelf.previousSelectedIndex = weakSelf.selectedIndex;
+                    weakSelf.selectedIndex = selectedIndexPath.row;
+                } completion: ^(BOOL finished) {
+                    if (weakSelf.previousSelectedIndex != -1) {
+                        [weakSelf restoreItemInCollectionView:collectionView atIndexPath:[NSIndexPath indexPathForRow:weakSelf.previousSelectedIndex inSection:0]];
+                    }
+                    [weakSelf.animationLock unlock];
+                }];
+            } completion:nil];
         }
         else {
             self.previousSelectedIndex = self.selectedIndex;
