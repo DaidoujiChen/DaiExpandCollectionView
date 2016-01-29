@@ -71,12 +71,13 @@ typedef enum {
     CGRect shiftFrame = rect;
     shiftFrame.origin.y -= CGRectGetHeight(self.collectionView.bounds);
     shiftFrame.size.height += CGRectGetHeight(self.collectionView.bounds) * 2;
-    NSArray *attributes = [super layoutAttributesForElementsInRect:shiftFrame];
+    NSMutableArray *attributes = [NSMutableArray array];
+    NSArray *originAttributes = [super layoutAttributesForElementsInRect:shiftFrame];
     
     //運算可視範圍內的 item frame 該是多少
     NSIndexPath *selectedIndexPath = [self.delegate selectedIndexPath];
-    for (int i = 0; i < attributes.count; i++) {
-        UICollectionViewLayoutAttributes *layoutAttributes = attributes[i];
+    for (int i = 0; i < originAttributes.count; i++) {
+        UICollectionViewLayoutAttributes *layoutAttributes = [originAttributes[i] copy];
         CGRect frame = layoutAttributes.frame;
         NSInteger row = layoutAttributes.indexPath.row;
         BOOL isDefaultItem = NO;
@@ -111,6 +112,7 @@ typedef enum {
             frame.origin = [self gridPositionAtIndex:row];
         }
         layoutAttributes.frame = frame;
+        [attributes addObject:layoutAttributes];
     }
     return attributes;
 }
