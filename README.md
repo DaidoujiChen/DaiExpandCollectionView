@@ -126,6 +126,10 @@ self.daiExpandCollectionView.itemsInRow = 5;
 
 `DaiExpandCollectionView` will handle the animation automatic.
 
+Who use it
+======
+[Noooo (on App Store)](https://itunes.apple.com/us/app/id1096501732)
+
 Support
 ======
 - iOS 7.0+
