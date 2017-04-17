@@ -16,7 +16,7 @@ Unlike default `UICollectionView` can only display items with same fixed size,
 Installation
 ======
 
-###CocoaPods
+### CocoaPods
 DaiExpandCollectionView is available through [CocoaPods](http://cocoapods.org).
 
 * Add ```pod 'DaiExpandCollectionView'``` to your Podfile
@@ -24,7 +24,7 @@ DaiExpandCollectionView is available through [CocoaPods](http://cocoapods.org).
 * Run ```open App.xcworkspace```
 * Then ```#import <DaiExpandCollectionView/DaiExpandCollectionView.h>```
 
-###Manually
+### Manually
 Drag 4 source files under folder `DaiExpandCollectionView\DaiExpandCollectionView\` to your project.
 
 `````
@@ -39,7 +39,7 @@ and then import the main header file：`#import "DaiExpandCollectionView.h"`
 How to use
 ======
 
-###Step 1 : Init
+### Step 1 : Init
 
 `````
 DaiExpandCollectionView *daiExpandCollectionView = [DaiExpandCollectionView initWithFrame:self.view.bounds];
@@ -52,7 +52,7 @@ daiExpandCollectionView.expandDelegate = self;
 
 Next, register `UICollectionViewCell` and then set up `expandDelegate`.
 
-###Step 2 : Required delegate methods
+### Step 2 : Required delegate methods
 
 There are two required methods in `DaiExpandCollectionViewDelegate`
 
@@ -89,7 +89,7 @@ For example:
 }
 `````
 
-###Step 3 : Optional delegate methods
+### Step 3 : Optional delegate methods
 
 `````
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndex:(NSInteger)index;
