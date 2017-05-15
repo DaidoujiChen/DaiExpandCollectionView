@@ -10,6 +10,7 @@
 
 #define defaultGap 5.0f
 
+
 typedef enum {
     DaiExpandCollectionViewFlowLayoutExpandDirectionLeft,
     DaiExpandCollectionViewFlowLayoutExpandDirectionRight
@@ -53,12 +54,18 @@ typedef enum {
     [super prepareLayout];
     
     self.expandDirection = !self.expandDirection;
+    if (self.itemsInRow == 2) {
+        self.expandDirection = DaiExpandCollectionViewFlowLayoutExpandDirectionLeft;
+    }
     
     //計算 data 長度
     NSIndexPath *selectedIndexPath = [self.delegate selectedIndexPath];
     self.maxWidth = CGRectGetWidth(self.collectionView.frame);
     if (selectedIndexPath) {
         NSInteger increaseItems = pow((self.itemsInRow - 1), 2) - 1;
+        if (self.itemsInRow == 2) {
+            increaseItems = 3;
+        }
         self.maxHeight = defaultGap + ceil(((float)[self.collectionView numberOfItemsInSection:0] + increaseItems) / self.itemsInRow) * self.squareWithGap;
     }
     else {
@@ -96,6 +103,9 @@ typedef enum {
                 NSInteger shiftIndex = row;
                 if (row > selectedIndexPath.row) {
                     shiftIndex = row + pow((self.itemsInRow - 1), 2) - 1;
+                    if (self.itemsInRow == 2) {
+                        shiftIndex = row + 3;
+                    }
                 }
                 frame.origin = [self gridPositionAtIndex:shiftIndex];
             }
@@ -132,7 +142,11 @@ typedef enum {
     self.originalSize = CGSizeMake(square, square);
     
     //長大後的大小
-    self.expandSize = CGSizeMake(square * (self.itemsInRow - 1) + defaultGap * (self.itemsInRow - 2), square * (self.itemsInRow - 1) + defaultGap * (self.itemsInRow - 2));
+    if (self.itemsInRow == 2) {
+        self.expandSize = CGSizeMake(square * 2 + defaultGap, square * 2 + defaultGap);
+    } else {
+        self.expandSize = CGSizeMake(square * (self.itemsInRow - 1) + defaultGap * (self.itemsInRow - 2), square * (self.itemsInRow - 1) + defaultGap * (self.itemsInRow - 2));
+    }
 }
 
 #pragma mark - private
@@ -152,10 +166,24 @@ typedef enum {
 }
 
 - (NSInteger)gridXFromIndex:(NSInteger)index {
+    if (self.itemsInRow == 2) {
+        NSIndexPath *selectedIndexPath = [self.delegate selectedIndexPath];
+        if (selectedIndexPath && selectedIndexPath.row % 2 == 0 && selectedIndexPath.row + 1 == index) {
+            return 0;
+        }
+    }
     return index % self.itemsInRow;
 }
 
 - (NSInteger)gridYFromIndex:(NSInteger)index {
+    if (self.itemsInRow == 2) {
+        NSIndexPath *selectedIndexPath = [self.delegate selectedIndexPath];
+        if (selectedIndexPath) {
+            if ((selectedIndexPath.row % 2 == 0 && selectedIndexPath.row + 1 == index) || (selectedIndexPath.row % 2 == 1 && selectedIndexPath.row - 1 == index)) {
+                return 2 + index / self.itemsInRow;
+            }
+        }
+    }
     return index / self.itemsInRow;
 }
 
