@@ -103,6 +103,25 @@
     }
 }
 
+- (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    if (self.selectedIndex == indexPath.row) {
+        self.previousSelectedIndex = self.selectedIndex;
+        self.selectedIndex = -1;
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.expandDelegate respondsToSelector:@selector(collectionView:willDisplayCell:forItemAtIndexPath:)]) {
+        [self.expandDelegate collectionView:self willDisplayCell:cell forItemAtIndexPath:indexPath];
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.expandDelegate respondsToSelector:@selector(collectionView:didEndDisplayingCell:forItemAtIndexPath:)]) {
+        [self.expandDelegate collectionView:self didEndDisplayingCell:cell forItemAtIndexPath:indexPath];
+    }
+}
+
 #pragma mark - class method
 
 + (instancetype)initWithFrame:(CGRect)frame {
@@ -152,6 +171,10 @@
                         [weakSelf restoreItemInCollectionView:collectionView atIndexPath:[NSIndexPath indexPathForRow:weakSelf.previousSelectedIndex inSection:0]];
                     }
                     [weakSelf.animationLock unlock];
+                    
+                    if ([self.expandDelegate respondsToSelector:@selector(collectionView:didSelectItemAtIndex:)]) {
+                        [self.expandDelegate collectionView:self didSelectItemAtIndex:self.selectedIndex];
+                    }
                 }];
             } completion:nil];
         }

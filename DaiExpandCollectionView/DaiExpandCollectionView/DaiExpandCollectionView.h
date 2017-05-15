@@ -22,6 +22,7 @@
 + (instancetype)initWithFrame:(CGRect)frame itemsInRow:(NSInteger)itemsInRow;
 
 - (void)expandAtIndex:(NSInteger)index animated:(BOOL)animated;
+- (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 
 @end
 
@@ -33,5 +34,7 @@
 
 @optional
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndex:(NSInteger)index;
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
