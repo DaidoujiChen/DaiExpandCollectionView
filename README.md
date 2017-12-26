@@ -6,7 +6,7 @@ Expand current selected item and catch users' eyes.
 Demo
 ======
 
-![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiExpandCollectionViewPad4.gif)
+![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiExpandCollectionViewPad6.gif)
 
 Overview
 ======
